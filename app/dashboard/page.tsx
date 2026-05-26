@@ -11,7 +11,6 @@ type Provider = {
 
 export default function ProvidersDashboard() {
   const [providers, setProviders] = useState<Provider[]>([])
-
   useEffect(() => {
     fetch("/api/providers")
       .then(res => res.json())
