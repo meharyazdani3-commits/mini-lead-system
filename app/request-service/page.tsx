@@ -1,112 +1,35 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export default function Page() {
+type Provider = {
+  id: string | number
+  name: string
+  monthlyQuota: number
+  assignedCount: number
+}
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    city: "",
-    serviceType: "Service 1",
-    description: "",
-  })
+export default function RequestServicePage() {
+  const [providers, setProviders] = useState<Provider[]>([])
 
-  async function handleSubmit(e: any) {
-
-    e.preventDefault()
-
-    const res = await fetch("/api/request-service", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    })
-
-    const data = await res.json()
-
-    alert(JSON.stringify(data))
-  }
+  useEffect(() => {
+    fetch("/api/providers")
+      .then(res => res.json())
+      .then(setProviders)
+  }, [])
 
   return (
-    <div className="p-10">
-
-      <h1 className="text-2xl font-bold mb-5">
-        Request Service
-      </h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-md"
-      >
-
-        <input
-          placeholder="Name"
-          className="border p-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              name: e.target.value,
-            })
-          }
-        />
-
-        <input
-          placeholder="Phone"
-          className="border p-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              phone: e.target.value,
-            })
-          }
-        />
-
-        <input
-          placeholder="City"
-          className="border p-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              city: e.target.value,
-            })
-          }
-        />
-
-        <select
-          className="border p-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              serviceType: e.target.value,
-            })
-          }
-        >
-          <option>Service 1</option>
-          <option>Service 2</option>
-          <option>Service 3</option>
-        </select>
-
-        <textarea
-          placeholder="Description"
-          className="border p-2"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              description: e.target.value,
-            })
-          }
-        />
-
-        <button
-          className="bg-black text-white p-2"
-        >
-          Submit
-        </button>
-
-      </form>
-
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Request Service</h1>
+      
+      {providers.map((p) => (
+        <div key={p.id} className="border p-4 mb-2 rounded">
+          <h3 className="font-semibold">{p.name}</h3>
+          <p>Quota: {p.monthlyQuota}</p>
+          <p>Used: {p.assignedCount}</p>
+          <p>Remaining: {p.monthlyQuota - p.assignedCount}</p>
+        </div>
+      ))}
     </div>
   )
 }

@@ -1,8 +1,16 @@
 "use client"
+
 import { useEffect, useState } from "react"
 
+type Provider = {
+  id: string | number
+  name: string
+  monthlyQuota: number
+  assignedCount: number
+}
+
 export default function ProvidersDashboard() {
-  const [providers, setProviders] = useState<any[]>([])
+  const [providers, setProviders] = useState<Provider[]>([])
 
   useEffect(() => {
     fetch("/api/providers")
